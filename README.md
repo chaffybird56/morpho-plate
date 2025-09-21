@@ -25,16 +25,16 @@ Paste the GitHub attachment link to the demo video on its own line (GitHub will 
 <div align="left">
   <img src="https://github.com/user-attachments/assets/1ae88454-1fbf-4893-9395-ef175fa93a1a" width="400" alt="Close-up: stacked morphology thumbnails with OCR and confidence"/>
   <br/>
-  <sub><b>Fig A.</b> Per‑frame explainability: thumbnails of the morphological steps (left), OCR text with confidence (center), and the plate ROI box (green when OK, red on hit).</sub>
+  <sub><b>Fig A.</b> Per‑frame explainability: thumbnails of the morphological steps. </sub>
 </div>
 
-<div align="center">
+<div align="leftr">
   <img src="https://github.com/user-attachments/assets/c45867d7-a45e-4050-a469-40c3cf4c436b" width="400" alt="Multi‑vehicle scene with ALPR overlays"/>
   <br/>
   <sub><b>Fig B.</b> Multi‑vehicle scene — each detected plate is read and labeled with confidence.</sub>
 </div>
 
-<div align="center">
+<div align="left">
   <img src="https://github.com/user-attachments/assets/bd661eca-97d1-4e26-b833-01708ee8e631" width="400" alt="Street view with flagged and non‑flagged plates"/>
   <br/>
   <sub><b>Fig C.</b> Watchlist match example: non‑matches (green) vs a flagged plate (red).</sub>
