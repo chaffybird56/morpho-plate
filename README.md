@@ -22,7 +22,7 @@ Paste the GitHub attachment link to the demo video on its own line (GitHub will 
 4. **Overlay** the label, confidence, and a **green/red** ROI box (red on watchlist hit).
 5. **Explainability:** draw tiny thumbnails of each processing step next to the vehicle.
 
-<div align="center">
+<div align="left">
   <img src="https://github.com/user-attachments/assets/1ae88454-1fbf-4893-9395-ef175fa93a1a" width="400" alt="Close-up: stacked morphology thumbnails with OCR and confidence"/>
   <br/>
   <sub><b>Fig A.</b> Per‑frame explainability: thumbnails of the morphological steps (left), OCR text with confidence (center), and the plate ROI box (green when OK, red on hit).</sub>
