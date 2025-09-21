@@ -19,19 +19,19 @@ https://github.com/user-attachments/assets/14b95fe0-854a-4f81-be28-ff56e1cd322f
 5. **Explainability:** show tiny thumbnails of each processing step next to the vehicle.
 
 <div align="center">
-  <img src="IMG_CLOSE_STACK_URL" width="500" alt="Close-up: stacked morphology thumbnails with OCR and confidence"/>
+  <img src="<img width="268" height="256" alt="SCR-20250921-mjiq" src="https://github.com/user-attachments/assets/1ae88454-1fbf-4893-9395-ef175fa93a1a" />" width="500" alt="Close-up: stacked morphology thumbnails with OCR and confidence"/>
   <br/>
   <sub><b>Fig A.</b> Per‑frame explainability: thumbnails of the morphological steps (left), OCR text with confidence (center), and the plate ROI box (green when OK, red on hit).</sub>
 </div>
 
 <div align="center">
-  <img src="IMG_MULTI_CAR_URL" width="500" alt="Multi‑vehicle scene with ALPR overlays"/>
+  <img src="<img width="626" height="440" alt="SCR-20250921-mjne" src="https://github.com/user-attachments/assets/c45867d7-a45e-4050-a469-40c3cf4c436b" />" width="500" alt="Multi‑vehicle scene with ALPR overlays"/>
   <br/>
   <sub><b>Fig B.</b> Multi‑vehicle scene — each detected plate is read and labeled with confidence.</sub>
 </div>
 
 <div align="center">
-  <img src="IMG_STREET_FLAG_URL" width="500" alt="Street view with flagged and non‑flagged plates"/>
+  <img src="<img width="640" height="263" alt="SCR-20250921-mjoo" src="https://github.com/user-attachments/assets/bd661eca-97d1-4e26-b833-01708ee8e631" />" width="500" alt="Street view with flagged and non‑flagged plates"/>
   <br/>
   <sub><b>Fig C.</b> Watchlist match example: non‑matches (green) vs a flagged plate (red).</sub>
 </div>
@@ -131,10 +131,10 @@ show(frame)
 
 Replace the placeholders below with GitHub user‑attachments (or repo‑local) links:
 
-* <img width="268" height="256" alt="SCR-20250921-mjiq" src="https://github.com/user-attachments/assets/1ae88454-1fbf-4893-9395-ef175fa93a1a" />
+* 
 
-* <img width="626" height="440" alt="SCR-20250921-mjne" src="https://github.com/user-attachments/assets/c45867d7-a45e-4050-a469-40c3cf4c436b" />
+* 
 
-* <img width="640" height="263" alt="SCR-20250921-mjoo" src="https://github.com/user-attachments/assets/bd661eca-97d1-4e26-b833-01708ee8e631" />
+* 
 
 All images above are rendered with `width="500"` to keep a clean, consistent look on GitHub pages.
