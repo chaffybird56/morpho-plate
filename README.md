@@ -1,6 +1,6 @@
 # Automatic License Plate Recognition (ALPR) — Classical Morphology + OCR
 
-> A lightweight ALPR pipeline that detects plates, enhances them with **morphological image processing**, and reads text with OCR. Built to run in real‑time on roadway footage, with optional blacklist (watchlist) matching and clear visual overlays.
+> A lightweight ALPR pipeline that detects plates, enhances them with **morphological image processing**, and reads text with OCR. Built for real‑time roadway footage, with optional blacklist (watchlist) matching and clear overlays.
 
 ---
 
@@ -10,55 +10,79 @@ Paste the GitHub attachment link to the demo video on its own line (GitHub will 
 
 [https://github.com/user-attachments/assets/14b95fe0-854a-4f81-be28-ff56e1cd322f](https://github.com/user-attachments/assets/14b95fe0-854a-4f81-be28-ff56e1cd322f)
 
-<sub>Tip: GitHub sizes video players automatically. To keep the page compact, a `<details>` block can be used to collapse the player if desired.</sub>
-
 ---
 
 ## 🔎 What this project does — at a glance
 
-1. **Detect** candidate license plates in each frame (one‑stage CNN detector).
-2. **Crop** each plate region and run a **morphology pipeline** to boost text contrast.
+1. **Detect** candidate license plates in each frame (compact one‑stage CNN).
+2. **Crop** each plate region and run a short **morphology pipeline** to boost text contrast.
 3. **OCR** the processed crop to obtain the plate string and a **confidence**.
 4. **Overlay** the label, confidence, and a **green/red** ROI box (red on watchlist hit).
 5. **Explainability:** draw tiny thumbnails of each processing step next to the vehicle.
 
-<div align="left">
-  <img src="https://github.com/user-attachments/assets/1ae88454-1fbf-4893-9395-ef175fa93a1a" width="400" alt="Close-up: stacked morphology thumbnails with OCR and confidence"/>
-  <br/>
-  <sub><b>Fig A.</b> Per‑frame explainability: thumbnails of the morphological steps. </sub>
-</div>
-
-<div align="leftr">
-  <img src="https://github.com/user-attachments/assets/c45867d7-a45e-4050-a469-40c3cf4c436b" width="400" alt="Multi‑vehicle scene with ALPR overlays"/>
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/c45867d7-a45e-4050-a469-40c3cf4c436b" width="500" alt="Multi‑vehicle scene with ALPR overlays"/>
   <br/>
   <sub><b>Fig B.</b> Multi‑vehicle scene — each detected plate is read and labeled with confidence.</sub>
 </div>
 
-<div align="left">
-  <img src="https://github.com/user-attachments/assets/bd661eca-97d1-4e26-b833-01708ee8e631" width="400" alt="Street view with flagged and non‑flagged plates"/>
-  <br/>
-  <sub><b>Fig C.</b> Watchlist match example: non‑matches (green) vs a flagged plate (red).</sub>
-</div>
-
 ---
 
-## 🧠 Why classical morphology before OCR?
+## 🧠 Classical morphology before OCR — the full story
 
-Traffic footage often contains **glare**, **motion blur**, and **low contrast** between characters and the plate background. Modern OCR is far more reliable when characters are clearly separated from background. The pipeline therefore performs a short sequence of operations on each plate crop:
+Traffic footage often exhibits **glare**, **motion blur**, and **low contrast**. OCR models are much more reliable when characters are cleanly separated from background. The pipeline therefore applies a small sequence of contrast‑shaping operations to each plate crop.
 
-* **Grayscale** → remove color variation.
-* **Gaussian blur** → reduce sensor noise/fine texture.
-* **Otsu threshold** → pick a global binary threshold $\tau$ that maximizes between‑class variance, isolating characters from the plate field.
-* **Dilation** → connect broken strokes using a small rectangular structuring element (e.g., 2×2 or 3×3), thickening characters just enough for OCR.
-* **Invert** → ensure the foreground/background polarity matches what the OCR model expects.
+Let the plate crop be an image $I\in[0,255]^{H\times W}$. The processing steps are:
 
-**Mathematical note.** For a binary image $X$ and structuring element $S$, dilation is
+### 1) Grayscale and denoise
 
-$$
-X \oplus S = \{\, x\;|\; (\hat S)_x \cap X \neq \emptyset \,\},
-$$
+* Convert RGB to a single channel $G$.
+* Apply a small Gaussian blur with standard deviation $\sigma$ to suppress sensor noise: $\tilde G = G * \mathcal N(0,\sigma^2)$.
 
-which fatten bright components (character strokes). Otsu’s method chooses $\tau$ to maximize the between‑class variance of pixel intensities.
+**Why:** smoothing removes high‑frequency speckle that otherwise creates spurious binary islands after thresholding.
+
+### 2) Global binarization (Otsu)
+
+Choose a threshold $\tau$ that maximizes the **between‑class variance** of foreground and background intensities. With histogram class probabilities $\omega_0(\tau), \omega_1(\tau)$ and class means $\mu_0(\tau), \mu_1(\tau)$:
+
+$\sigma_b^2(\tau) = \omega_0(\tau)\,\omega_1(\tau)\,[\mu_0(\tau) - \mu_1(\tau)]^2.$
+
+The binary image is $X=\mathbf{1}[\tilde G\ge\tau]$.
+
+**Why:** Otsu selects a data‑driven threshold that best separates bright plate background from darker characters.
+
+### 3) Morphological clean‑up (dilation / opening / closing)
+
+Morphology treats binary images as sets. With structuring element $S$:
+
+* **Erosion:** $X\ominus S=\{x\mid S_x\subseteq X\}$ removes small bright spots.
+* **Dilation:** $X\oplus S=\{x\mid (\hat S)_x\cap X\neq\varnothing\}$ fattens bright regions, reconnecting broken strokes.
+* **Opening:** $X\circ S=(X\ominus S)\oplus S$ deletes tiny noise while preserving thin strokes.
+* **Closing:** $X\bullet S=(X\oplus S)\ominus S$ fills small gaps in bright components.
+
+In practice we use a tiny rectangular $S$ (2×2 or 3×3) and either: (a) a single **dilation** when letters are fragmented, or (b) **open→close** when salt‑and‑pepper noise appears.
+
+**Parameter intuition:** if the nominal character stroke width in pixels is $w$, then $|S|\approx 0.2w$ thickens without merging neighbors. Over‑dilation merges characters; under‑dilation leaves gaps that hurt OCR.
+
+### 4) Polarity and gradients
+
+* **Invert** when necessary so characters are dark on light (or vice‑versa) to match the OCR head’s training polarity.
+* Optionally compute a **morphological gradient** $(X\oplus S)-(X\ominus S)$ as a thin outline that can help OCR trained on edge‑like glyphs.
+
+### 5) What the OCR actually sees
+
+The OCR head is evaluated on one or two variants (post‑dilation and/or inverted). The variant with the highest confidence $c\in[0,1]$ is selected.
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/1ae88454-1fbf-4893-9395-ef175fa93a1a" width="500" alt="Close‑up: stacked morphology thumbnails with OCR and confidence"/>
+  <br/>
+  <sub><b>Fig A.</b> Per‑frame explainability — thumbnails of the morphological steps and the resulting OCR label with confidence.</sub>
+</div>
+
+**Key takeaways**
+
+* Otsu provides a principled binary split; morphology then repairs stroke continuity.
+* The entire chain is **deterministic**, low‑latency, and easy to tune with just $\sigma$, $S$ size, and a polarity flag.
 
 ---
 
@@ -66,25 +90,25 @@ which fatten bright components (character strokes). Otsu’s method chooses $\ta
 
 **Detector → ROI → Morphology → OCR → Post‑process.**
 
-**1) Detection.** A compact one‑stage detector (configured in code as a YOLO‑style model) outputs plate bounding boxes $[x_1,y_1,x_2,y_2])$ with a class score. The detector is initialized once at startup.
+**1) Detection.** A compact one‑stage detector (YOLO‑style) outputs plate boxes with a score per frame. Boxes are represented as $(x_1,y_1,x_2,y_2)$ in pixel coordinates.
 
-**2) ROI crop.** Each box is sanity‑checked (aspect ratio / minimum size) and cropped. Very small crops are skipped to avoid spurious OCR.
+**2) ROI crop.** Each box is sanity‑checked (aspect ratio, minimum size) and cropped. Tiny crops are skipped to avoid spurious OCR.
 
-**3) Morphological enhancement.** The function `morphological_pipeline(roi)` returns a list of labeled snapshots: `("Gray", I₁)`, `("Blur", I₂)`, `("Otsu", I₃)`, `("Dilate", I₄)`, `("Invert", I₅)`. These are also used to render the explainer thumbnails in Fig A.
+**3) Morphological enhancement.** The function `morphological_pipeline(...)` returns labeled snapshots: `("Gray", I1)`, `("Blur", I2)`, `("Otsu", I3)`, `("Dilate", I4)`, `("Invert", I5)`; these feed both OCR and the explainer strip in Fig A.
 
-**4) OCR.** The enhanced crop is read by the OCR head (provided through the ALPR wrapper). The output is an uppercase alphanumeric string and a confidence $c \in [0,1]$.
+**4) OCR.** Returns an uppercase alphanumeric string and a confidence score.
 
-**5) Post‑processing & overlays.** The label and confidence are drawn in a legible banner above the box; the box is **green** by default and turns **red** if the plate string appears in a watchlist set. A vertical strip of thumbnails (from step 3) is placed near the vehicle for quick debugging.
+**5) Post‑processing & overlays.** The label and confidence are drawn in a high‑contrast banner; the ROI box is **green** unless the string matches a watchlist (then **red**). A vertical strip of thumbnails is placed near the vehicle for quick debugging.
 
-**High‑level pseudocode**
+**Pseudocode**
 
 ```text
 for each video frame:
   boxes = detector(frame)
   for b in boxes:
     roi = crop(frame, b)
-    steps = morphological_pipeline(roi)   # [Gray, Blur, Otsu, Dilate, Invert]
-    text, conf = ocr(select_best(steps))  # evaluate OCR on one/two variants
+    steps = morphological_pipeline(roi)   # [Gray, Blur, Otsu, Dilate, (Invert)]
+    text, conf = ocr(select_best(steps))
     color = RED if text in WATCHLIST else GREEN
     draw_banner(frame, text, conf, near=b)
     draw_box(frame, b, color)
@@ -92,27 +116,29 @@ for each video frame:
 show(frame)
 ```
 
-> Selection policy: OCR is evaluated on the post‑dilation or inverted image; if confidence is low, the raw crop is tried as fallback.
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/bd661eca-97d1-4e26-b833-01708ee8e631" width="500" alt="Street view with flagged and non‑flagged plates"/>
+  <br/>
+  <sub><b>Fig C.</b> Watchlist matching — non‑matches in green, flagged plate in red.</sub>
+</div>
 
 ---
 
-## 🧰 Practical guidance & tuning
+## 📐 Practical tuning notes
 
-* **Thresholding:** Otsu works well for daytime clips. Under harsh glare or night scenes, adaptive thresholding (mean/gaussian) can replace or complement Otsu.
-* **Structuring element:** Start with 2×2 or 3×3. Over‑dilation can merge neighboring characters (false merges); under‑dilation leaves gaps.
-* **Text banner legibility:** Measure text size via `cv2.getTextSize` and draw a white rectangle behind the text to ensure readability across backgrounds.
-* **Throughput:** Keep thumbnail sizes small (≈80×60) to retain real‑time FPS while still providing explainability.
-* **Watchlist:** Normalize OCR output by uppercasing and stripping spaces/hyphens before lookup.
+* **Thresholding:** Otsu is strong for daytime. Under harsh glare or at night, consider **adaptive** thresholding (mean or Gaussian) in place of, or in addition to, Otsu.
+* **Structuring element:** start with 2×2 or 3×3 rectangles. Increase only if letters fragment; decrease if letters start to merge.
+* **Text banner:** compute text extent via `cv2.getTextSize` and paint a white rectangle behind the text for legibility.
+* **Throughput:** thumbnail sizes around 80×60 keep the explainer strip cheap while preserving interpretability.
+* **Normalization for watchlists:** uppercase and strip whitespace/hyphens before lookup.
 
 ---
 
-## ✅ What to expect (typical results)
+## ✅ Expected behavior and limits
 
-* On clear, forward‑facing shots: high read rates with confidences $>0.9$; stable overlays (Fig B).
-* On low‑contrast plates: the morphology stage typically raises OCR confidence by connecting broken strokes (Fig A).
-* On a watchlist hit: the ROI turns red and the label remains; false alarms are rare when confidence is high (Fig C).
-
-**Limitations.** Motion blur and severe glare degrade detection and OCR; plate formats vary by region; stacked characters or non‑Latin scripts require specialized OCR. Adding basic object tracking (IoU‑based) stabilizes labels across frames.
+* Clear, forward‑facing shots yield high read rates with confidences above 0.9 (see Fig B).
+* On low‑contrast plates, morphology usually increases confidence by reconnecting strokes (Fig A).
+* Limits: strong motion blur and severe glare degrade both detection and OCR; regional plate layouts vary; stacked characters or non‑Latin scripts require specialized OCR. Adding simple object tracking (IoU‑based) stabilizes labels across frames.
 
 ---
 
@@ -120,9 +146,8 @@ show(frame)
 
 * `main.py` — video loop, detector inference, overlays, thumbnails, watchlist logic.
 * `morphological_pipeline.py` — the classical enhancement chain described above.
-* `data/` — sample clip(s) if provided.
 
-**Ethics & privacy.** ALPR must be used in accordance with local law and organizational policy. Consider blurring faces/vehicles outside the ROI in demo footage.
+**Ethics & privacy.** Use ALPR in accordance with local law and policy. Consider blurring faces/vehicles outside the ROI in demos.
 
 ---
 
