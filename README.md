@@ -4,12 +4,9 @@
 
 ---
 
-## 🎬 Demo (placeholder)
+## 🎬 Demo 
 
-Paste a GitHub **user‑attachments** video URL on its own line and (optionally) keep the HTML tag below for autoplay on supported renderers.
-
-
-(https://github.com/user-attachments/assets/14b95fe0-854a-4f81-be28-ff56e1cd322f)
+https://github.com/user-attachments/assets/14b95fe0-854a-4f81-be28-ff56e1cd322f
 
 ---
 
