@@ -139,10 +139,10 @@ show(frame)
 
 Replace the placeholders below with GitHub user‑attachments (or repo‑local) links:
 
-* `<img width="268" height="256" alt="SCR-20250921-mjiq" src="https://github.com/user-attachments/assets/1ae88454-1fbf-4893-9395-ef175fa93a1a" />`
+* <img width="268" height="256" alt="SCR-20250921-mjiq" src="https://github.com/user-attachments/assets/1ae88454-1fbf-4893-9395-ef175fa93a1a" />
 
-* `<img width="626" height="440" alt="SCR-20250921-mjne" src="https://github.com/user-attachments/assets/c45867d7-a45e-4050-a469-40c3cf4c436b" />`
+* <img width="626" height="440" alt="SCR-20250921-mjne" src="https://github.com/user-attachments/assets/c45867d7-a45e-4050-a469-40c3cf4c436b" />
 
-* `<img width="640" height="263" alt="SCR-20250921-mjoo" src="https://github.com/user-attachments/assets/bd661eca-97d1-4e26-b833-01708ee8e631" />`
+* <img width="640" height="263" alt="SCR-20250921-mjoo" src="https://github.com/user-attachments/assets/bd661eca-97d1-4e26-b833-01708ee8e631" />
 
 All images above are rendered with `width="500"` to keep a clean, consistent look on GitHub pages.
