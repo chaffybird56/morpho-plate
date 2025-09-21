@@ -8,13 +8,8 @@
 
 Paste a GitHub **user‑attachments** video URL on its own line and (optionally) keep the HTML tag below for autoplay on supported renderers.
 
-```
-VIDEO_DEMO_URL
-```
 
-<!-- Optional HTML embed for some markdown renderers -->
-
-<video src="(https://github.com/user-attachments/assets/14b95fe0-854a-4f81-be28-ff56e1cd322f)" width="500" autoplay loop muted playsinline></video>
+(https://github.com/user-attachments/assets/14b95fe0-854a-4f81-be28-ff56e1cd322f)
 
 ---
 
