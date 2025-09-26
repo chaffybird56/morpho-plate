@@ -6,8 +6,6 @@
 
 ## 🎬 Demo
 
-Paste the GitHub attachment link to the demo video on its own line (GitHub will render an inline player):
-
 [https://github.com/user-attachments/assets/14b95fe0-854a-4f81-be28-ff56e1cd322f](https://github.com/user-attachments/assets/14b95fe0-854a-4f81-be28-ff56e1cd322f)
 
 ---
