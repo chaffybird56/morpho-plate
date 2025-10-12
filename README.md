@@ -142,7 +142,7 @@ show(frame)
 * On low‑contrast plates: the morphology stage typically raises OCR confidence by connecting broken strokes (Fig A).
 * On a watchlist hit: the ROI turns red and the label remains; false alarms are rare when confidence is high (Fig C).
 
-**Limitations.** Motion blur and severe glare degrade detection and OCR; plate formats vary by region; stacked characters or non‑Latin scripts require specialized OCR. Adding simple tracking (IoU‑based) stabilizes labels across frames.
+**Limitations.** Motion blur and severe glare degrade detection and OCR; plate formats vary by region; stacked characters or non‑Latin scripts require specialized OCR. Adding simple tracking (IoU‑based) stabilises labels across frames.
 
 ---
 
