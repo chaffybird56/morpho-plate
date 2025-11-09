@@ -1,6 +1,6 @@
 # Automatic License Plate Recognition (ALPR) — Classical Morphology + OCR
 
-> A lightweight ALPR pipeline that detects plates, enhances them with **morphological image processing**, and reads text with OCR. Built to run in real‑time on roadway footage, with optional blacklist (watchlist) matching and clear visual overlays.
+> A lightweight ALPR pipeline that detects plates, enhances them with **morphological image processing**, and reads text with OCR. Built to run in real‑time on roadway footage, with optional blacklist (watchlist) matching and clear visual overlays!
 
 ---
 
