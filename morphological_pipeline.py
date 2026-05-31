@@ -12,7 +12,7 @@ def morphological_pipeline(roi):
       5) Inversion (optional, for a black-on-white effect)
     
     Returns a list of (title, image) pairs for each step.
-    display them stacked vertically above the bounding box.
+    Display them stacked vertically above the bounding box.
     """
     steps = []
     
