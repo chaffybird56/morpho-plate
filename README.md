@@ -146,10 +146,45 @@ show(frame)
 
 ---
 
-## 🗂️ Repository (brief)
+## 🚀 Quick start
 
-* `main.py` — video loop, detector inference, overlays, thumbnails, watchlist logic.
-* `morphological_pipeline.py` — the classical enhancement chain described above.
+```bash
+git clone https://github.com/chaffybird56/morpho-plate.git
+cd morpho-plate
+python -m venv .venv && source .venv/bin/activate
+pip install -e .
+
+# Place a test clip at data/test1.mp4, then run:
+morphoplate data/test1.mp4 -w config/watchlist.example.txt
+
+# Save annotated output without a preview window:
+morphoplate data/test1.mp4 -w config/watchlist.example.txt -o output/annotated.mp4 --no-display
+```
+
+For development (tests, coverage):
+
+```bash
+pip install -e ".[dev]"
+pytest
+```
+
+---
+
+## 🗂️ Repository layout
+
+```
+morphoplate/
+├── alpr/          # fast-alpr wrapper (detection + OCR)
+├── morphology/    # classical enhancement chain (Gray → Blur → Otsu → Dilate → Invert)
+├── viz/           # overlays and morphology thumbnails
+├── config.py      # Settings dataclass
+├── watchlist.py   # plate normalization and file loader
+├── pipeline.py    # VideoPipeline orchestrator
+└── cli.py         # morphoplate CLI entry point
+config/
+└── watchlist.example.txt
+tests/             # unit tests (no GPU / video required)
+```
 
 **Ethics & privacy.** ALPR must be used in accordance with local law and organizational policy. Consider blurring faces/vehicles outside the ROI in demo footage.
 
