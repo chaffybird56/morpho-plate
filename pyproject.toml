@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "morphoplate"
+version = "0.2.0"
+description = "ALPR pipeline with classical morphological enhancement and explainability overlays"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+dependencies = [
+    "opencv-python>=4.8.0",
+    "numpy>=1.24.0",
+    "fast-alpr>=0.3.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4.0", "pytest-cov>=4.1.0"]
+
+[project.scripts]
+morphoplate = "morphoplate.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["morphoplate*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
